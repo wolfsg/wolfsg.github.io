@@ -1,0 +1,134 @@
+<!-- include A-Frame obviously -->
+<script src="https://aframe.io/releases/0.9.0/aframe.min.js"></script>
+<!-- include ar.js for A-Frame -->
+<script src="https://jeromeetienne.github.io/AR.js/aframe/build/aframe-ar.js"></script>
+
+<script>
+<!-- Clicks for ar.js -->
+
+AFRAME.registerComponent('markerhandler', {
+  schema: {
+      target: {type: 'string', default: '' }
+  },
+
+    init: function() {
+      const animatedMarker = document.querySelector("#animated-marker");
+      var data = this.data;
+      var el = this.el;
+      var droptarget = document.querySelector("#dropball");
+
+        el.addEventListener('click', function(ev){
+            if (animatedMarker.object3D.visible == true && ev.detail.cursorEl) {
+              droptarget.setAttribute('visible', true );
+            }
+        });
+}});
+
+
+<!-- Clicks and moves for non ar.js -->
+  AFRAME.registerComponent('drop-on-click', {
+  schema: {
+      target: {type: 'string', default: '' }
+  },
+  init: function() {
+
+      var data = this.data;
+      var el = this.el;
+      var droptarget = document.querySelector(this.data.target);
+
+      if (droptarget) {
+
+        el.addEventListener('click', function () {
+          var el3D = el.object3D
+
+          function space3v( x, y, z ) {
+            return '' + x + ' ' 
+                    + y + ' ' 
+                    + z ;
+          };
+          var worldpos = new THREE.Vector3;
+          el3D.getWorldPosition(worldpos);
+          var elx = worldpos.x;
+          var ely = worldpos.y;
+          var elz = worldpos.z;
+
+          droptarget.setAttribute('visible', true );
+          droptarget.setAttribute('animation__pos', "dur: 1000; property: position; from: "+space3v(elx, 10, -20) + '; to: '+ space3v(elx, ely+.1, elz) + ';' );
+        });
+      } else {
+        console.log('Id ('+id+') did not select any target.');
+      }
+
+  }
+  });
+  AFRAME.registerComponent('emp-on-hover', {
+    schema: {
+      color: { default: '#f00000'},
+      retcolor: { default: '#f00000'}
+  },
+  init: function() {
+      var data = this.data;
+      var el = this.el;
+      var defaultColor = el.getAttribute('material').color;
+
+      el.addEventListener('mouseenter', function () {
+        el.setAttribute('animation__hoverclr', "dur: 500; property: components.material.material.color; type: color; to: "+data.color + ';');
+      });
+
+      el.addEventListener('mouseleave', function () {
+        el.setAttribute('animation__hoverclr', "dur: 250; property: components.material.material.color; type: color; to: "+ defaultColor+ ';');
+      });
+  }
+  } );
+
+
+</script>
+
+
+<body style='margin : 0px; overflow: hidden;'>
+
+  <a-scene embedded arjs='debugUIEnabled: false;'>
+
+
+  <a-marker preset='hiro' id="animated-marker" emitevents="false" >
+
+
+   <a-sphere visible=false position='0 .5 -1'  id='dropball' position='0 0 0' material='opacity: 1;' radius=".1" color="#20f0ff" ></a-sphere>
+
+  <a-entity position='0 0 0' scale='.6 .6 .6'>
+
+    <!-- create your content here. just a box for now -->
+   <a-sphere position='0 0 0' material='opacity: 1;' radius=".1" color="#20f0ff" ></a-sphere>
+   <a-box position='0 0 -0.5'  material='opacity: 0.6;' depth=".1" color="#00ff00" height=".1" width="3"></a-box>
+   <a-box position='0 0 +0.5'  material='opacity: 0.6;' depth=".1" color="#00ff00" height=".1" width="3"></a-box>
+
+
+   <a-box position='-0.5 0 0'  material='opacity: 0.6;' depth="3" color="#0000e0" height=".1" width=".1"></a-box>
+   <a-box position='0.5 0 0'  material='opacity: 0.6;' depth="3" color="#0000e0" height=".1" width=".1"></a-box>
+
+   <!-- spaces between boxes -->
+     <a-box position='-1 -0.1 -1'  material='opacity: 0.6;' depth="1" color="#909090" height=".1" width="1" emp-on-hover drop-on-click='target: #dropball'></a-box>
+     <a-box position='-0 -0.1 -1'  material='opacity: 0.6;' depth="1" color="#909090" height=".1" width="1" emp-on-hover drop-on-click='target: #dropball'></a-box>
+     <a-box position='1 -0.1 -1'  material='opacity: 0.6;' depth="1" color="#909090" height=".1" width="1" emp-on-hover drop-on-click='target: #dropball'></a-box>
+
+     <a-box position='-1 -0.1 0'  material='opacity: 0.6;' depth="1" color="#909090" height=".1" width="1" emp-on-hover drop-on-click='target: #dropball'></a-box>
+     <a-box position='-0 -0.1 0'  material='opacity: 0.6;' depth="1" color="#909090" height=".1" width="1" emp-on-hover drop-on-click='target: #dropball'></a-box>
+     <a-box position='1 -0.1 0'  material='opacity: 0.6;' depth="1" color="#909090" height=".1" width="1" emp-on-hover drop-on-click='target: #dropball'></a-box>
+
+     <a-box position='-1 -0.1 1'  material='opacity: 0.6;' depth="1" color="#909090" height=".1" width="1" emp-on-hover drop-on-click='target: #dropball'></a-box>
+     <a-box position='-0 -0.1 1'  material='opacity: 0.6;' depth="1" color="#909090" height=".1" width="1" emp-on-hover drop-on-click='target: #dropball'></a-box>
+     <a-box position='1 -0.1 1'  material='opacity: 0.6;' depth="1" color="#909090" height=".1" width="1" emp-on-hover drop-on-click='target: #dropball'></a-box>
+
+  </a-entity>
+
+  </a-marker>
+
+
+  <a-light type="ambient" color="#f0f0f0"></a-light>
+  <a-light type="point" intensity="2" position="2 4 4"></a-light>
+
+    <a-entity camera />
+
+  </a-scene>
+</body>
+
