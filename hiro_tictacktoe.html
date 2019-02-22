@@ -1,16 +1,8 @@
 <!-- include A-Frame obviously -->
 <script src="https://aframe.io/releases/0.9.0/aframe.min.js"></script>
 <!-- include ar.js for A-Frame -->
-<!-- <script src="https://jeromeetienne.github.io/AR.js/aframe/build/aframe-ar.js"></script> -->
-<script src="aframe/build/aframe-ar.js"></script>
-
-    <script>
-      // Workaround for an AR.js bug (https://github.com/jeromeetienne/AR.js/issues/410)
-      const sceneEl = document.querySelector('a-scene');
-      sceneEl.addEventListener('loaded', () => {
-        sceneEl.camera = new THREE.PerspectiveCamera();
-      });
-    </script>
+<script src="https://jeromeetienne.github.io/AR.js/aframe/build/aframe-ar.js"></script>
+<!-- <script src="aframe/build/aframe-ar.js"></script> -->
 
 <script>
 <!-- from https://stackoverflow.com/questions/53380400/aframe-smoothing-position-and-rotation -->
@@ -143,8 +135,10 @@ AFRAME.registerComponent('markerhandler', {
 
 <body style='margin : 0px; overflow: hidden;'>
 
-  <!-- <a-scene embedded arjs='debugUIEnabled: false;' cursor="rayOrigin: mouse"> -->
+  <a-scene embedded arjs='debugUIEnabled: false;' cursor="rayOrigin: mouse">
+<!--
   <a-scene embedded arjs='debugUIEnabled: false;' >
+ -->
 
 
   <a-marker preset='hiro' id="animated-marker" emitevents="false" smoother="target: #vrobj">
